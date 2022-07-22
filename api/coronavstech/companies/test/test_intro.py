@@ -1,9 +1,16 @@
+# $ PYTHONPATH= C:\Users\f-300\Documents\projects\DjangoPytest\api pytest
+# C:\Users\f-300\Documents\projects\DjangoPytest\api
+# C:\Users\f-300\Documents\projects\DjangoPytest\api\coronavstech
+# export PYTHONPATH=C:\Users\f-300\Documents\projects\DjangoPytest\api
+
 # $ pytest . -v -p no:warnings
 # $ pytest . -v -p no:warnings -m slow
 # $ pytest . -v -p no:warnings -m 'not slow'
 # $ pytest . -v -p no:warnings -s
+# $ pytest . -v -s --durations=0 
 
 import pytest
+
 def test_our_first_test() -> None:
     assert 1 == 1
 
@@ -58,3 +65,21 @@ def test_raise_covid19_exception_should_pass():
     with pytest.raises(ValueError) as e:
         raise_covid19_exception()
     assert 'CoronaVirus Exception' == str(e.value)
+    
+import logging
+logger = logging.getLogger('CORONA_LOGS')
+
+def log_covid19_exception():
+    try:
+        raise ValueError('CoronaVirus Exception')
+    except ValueError as e:
+        logger.warning(f'I am logging {str(e)}')
+        
+def test_logged_warning_level(caplog):
+    log_covid19_exception()
+    assert 'I am logging CoronaVirus Exception' in caplog.text
+    
+def test_logged_info_level(caplog):
+    with caplog.at_level(logging.INFO):
+        logging.info('I am logging info level')
+        assert 'I am logging info level' in caplog.text
